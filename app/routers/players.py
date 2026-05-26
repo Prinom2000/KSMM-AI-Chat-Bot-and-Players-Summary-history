@@ -215,7 +215,7 @@ clearances, blockedShots, duels, yellowCards, redCards,
 cleanSheets, hatTricks, manOfTheMatch, injuries, avgRating,
 and per-match breakdown.
 
-**Example player IDs:** Enzo Fernández = 1106826, Salah = 159665
+**Example player IDs:** Enzo Fernández = 974505, Salah = 159665
 """,
 )
 async def get_sofa_football(player_id: int):
@@ -306,3 +306,24 @@ async def get_sofa_mma(player_id: int):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"SofaScore MMA error: {str(e)}")
+    
+
+@router.get("/debug/http-check")
+async def debug_http():
+    import sys
+    try:
+        from curl_cffi.requests import AsyncSession
+        curl_ok = True
+    except:
+        curl_ok = False
+    
+    import httpx
+    async with httpx.AsyncClient(timeout=10) as c:
+        r = await c.get("https://api.sofascore.com/api/v1/player/974505")
+        httpx_status = r.status_code
+
+    return {
+        "python": sys.version,
+        "curl_cffi_available": curl_ok,
+        "sofascore_httpx_status": httpx_status,
+    }
