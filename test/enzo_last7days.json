@@ -1,0 +1,102 @@
+{
+  "summary": {
+    "player": "",
+    "playerId": 974505,
+    "period": "Last 7 days",
+    "from": "2026-05-18",
+    "fetchedAt": "2026-05-25T09:15:59Z",
+    "appearances": 2,
+    "minutesPlayed": 180,
+    "goals": 1,
+    "assists": 0,
+    "shots": 2,
+    "shotsOnTarget": 1,
+    "xG": 0.06,
+    "xA": 0.52,
+    "keyPasses": 4,
+    "tackles": 0,
+    "interceptions": 0,
+    "yellowCards": 0,
+    "redCards": 0,
+    "avgRating": 7.55,
+    "avgPassAccuracyPct": 0.0
+  },
+  "matches": [
+    {
+      "match": {
+        "eventId": 16087727,
+        "date": "2026-05-19 19:15 UTC",
+        "competition": "Premier League",
+        "homeTeam": "Chelsea",
+        "awayTeam": "Tottenham Hotspur",
+        "homeScore": 2,
+        "awayScore": 1,
+        "status": "Ended"
+      },
+      "stats": {
+        "goals": 1,
+        "assists": 0,
+        "shots": 2,
+        "shotsOnTarget": 1,
+        "xG": 0.06,
+        "xA": 0.48,
+        "keyPasses": 2,
+        "totalPasses": 49,
+        "accuratePasses": 0,
+        "passAccuracyPct": 0.0,
+        "bigChancesCreated": 1,
+        "dribblesSuccessful": 0,
+        "dribblesAttempted": 0,
+        "tackles": 0,
+        "interceptions": 0,
+        "clearances": 0,
+        "blockedShots": 0,
+        "duelsWon": 0,
+        "duelsTotal": 0,
+        "aerialDuelsWon": 0,
+        "yellowCards": 0,
+        "redCards": 0,
+        "minutesPlayed": 90,
+        "sofascoreRating": 8.6
+      }
+    },
+    {
+      "match": {
+        "eventId": 14023966,
+        "date": "2026-05-24 15:00 UTC",
+        "competition": "Premier League",
+        "homeTeam": "Sunderland",
+        "awayTeam": "Chelsea",
+        "homeScore": 2,
+        "awayScore": 1,
+        "status": "Ended"
+      },
+      "stats": {
+        "goals": 0,
+        "assists": 0,
+        "shots": 0,
+        "shotsOnTarget": 0,
+        "xG": 0.0,
+        "xA": 0.04,
+        "keyPasses": 2,
+        "totalPasses": 55,
+        "accuratePasses": 0,
+        "passAccuracyPct": 0.0,
+        "bigChancesCreated": 0,
+        "dribblesSuccessful": 0,
+        "dribblesAttempted": 0,
+        "tackles": 0,
+        "interceptions": 0,
+        "clearances": 0,
+        "blockedShots": 0,
+        "duelsWon": 0,
+        "duelsTotal": 0,
+        "aerialDuelsWon": 0,
+        "yellowCards": 0,
+        "redCards": 0,
+        "minutesPlayed": 90,
+        "sofascoreRating": 6.5
+      }
+    }
+  ]
+}
