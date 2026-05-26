@@ -312,16 +312,20 @@ class SofaScoreService:
             if not stats:
                 continue
 
-            # Win / loss / draw — use player's current team id stored in event
-            player_team_id = (
-                ev.get("homeTeam", {}).get("id")
-                if any(
-                    p.get("id") == player_id
-                    for p in ev.get("homeTeam", {}).get("players", [])
-                )
-                else ev.get("awayTeam", {}).get("id")
-            )
-            result = self._result(ev, player_team_id)
+            # Win / loss / draw
+            # winnerCode: 1=home wins, 2=away wins, 3=draw
+            # stats.teamId দিয়ে player এর team বের করি
+            winner_code   = ev.get("winnerCode")
+            stats_team_id = stats.get("teamId")
+            home_id       = ev.get("homeTeam", {}).get("id")
+
+            if winner_code == 3:
+                result = "draw"
+            elif winner_code in (1, 2):
+                is_home = (stats_team_id == home_id) if stats_team_id else True
+                result = ("win" if winner_code == 1 else "loss") if is_home else ("loss" if winner_code == 1 else "win")
+            else:
+                result = self._result(ev, stats_team_id or home_id)
             summary["wins"]   += result == "win"
             summary["losses"] += result == "loss"
             summary["draws"]  += result == "draw"

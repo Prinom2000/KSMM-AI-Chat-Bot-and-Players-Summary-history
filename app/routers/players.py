@@ -314,16 +314,31 @@ async def debug_http():
     try:
         from curl_cffi.requests import AsyncSession
         curl_ok = True
-    except:
+        async with AsyncSession(impersonate="chrome124") as s:
+            r = await s.get("https://api.sofascore.com/api/v1/player/974505")
+            curl_status = r.status_code
+            curl_data = r.json() if r.status_code == 200 else {}
+    except Exception as e:
         curl_ok = False
-    
-    import httpx
-    async with httpx.AsyncClient(timeout=10) as c:
-        r = await c.get("https://api.sofascore.com/api/v1/player/974505")
-        httpx_status = r.status_code
+        curl_status = str(e)
+        curl_data = {}
 
     return {
         "python": sys.version,
         "curl_cffi_available": curl_ok,
-        "sofascore_httpx_status": httpx_status,
+        "curl_sofascore_status": curl_status,
+        "player_name": curl_data.get("player", {}).get("name", "N/A"),
+    }
+
+@router.get("/debug/sofa-test/{player_id}")
+async def debug_sofa(player_id: int):
+    from app.services.sofascore_service import SofaScoreService, _USE_CURL
+    svc = SofaScoreService()
+    info   = await svc.get_player_info(player_id)
+    events = await svc.get_recent_events(player_id)
+    return {
+        "curl_cffi_active": _USE_CURL,
+        "player_info": info,
+        "events_found": len(events),
+        "first_event": events[0] if events else None,
     }
