@@ -6,39 +6,60 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+import httpx
+
+# ── curl_cffi: use only if a pre-built wheel is available ──────────────────
+# On Render (read-only FS) compiling from source fails.
+# Safe check: import the actual Session class, not just the top-level package.
+_USE_CURL = False
 try:
-    from curl_cffi.requests import AsyncSession
+    from curl_cffi.requests import AsyncSession as _CurlSession  # pre-built wheel
     _USE_CURL = True
-except ImportError:
-    import httpx
-    _USE_CURL = False
+except Exception:
+    pass  # fall through to httpx
 
 BASE_URL = "https://api.sofascore.com/api/v1"
+
+# Full browser-like headers — reduces 403 risk even with httpx
 HEADERS = {
-    "User-Agent":       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept":           "application/json, text/plain, */*",
-    "Accept-Language":  "en-US,en;q=0.9",
-    "Referer":          "https://www.sofascore.com/",
-    "Origin":           "https://www.sofascore.com",
-    "Sec-Fetch-Dest":   "empty",
-    "Sec-Fetch-Mode":   "cors",
-    "Sec-Fetch-Site":   "same-site",
+    "User-Agent":         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                          "AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/124.0.0.0 Safari/537.36",
+    "Accept":             "application/json, text/plain, */*",
+    "Accept-Language":    "en-US,en;q=0.9",
+    "Accept-Encoding":    "gzip, deflate, br",
+    "Referer":            "https://www.sofascore.com/",
+    "Origin":             "https://www.sofascore.com",
+    "Sec-Fetch-Dest":     "empty",
+    "Sec-Fetch-Mode":     "cors",
+    "Sec-Fetch-Site":     "same-site",
+    "sec-ch-ua":          '"Chromium";v="124","Google Chrome";v="124","Not-A.Brand";v="99"',
+    "sec-ch-ua-mobile":   "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "Cache-Control":      "no-cache",
+    "Connection":         "keep-alive",
 }
 
 
 class SofaScoreService:
 
     # ─────────────────────────────────────────────────────────────
-    # Core HTTP — curl_cffi (Chrome TLS) preferred, httpx fallback
+    # Core HTTP
+    # Priority 1 — curl_cffi  (Chrome TLS fingerprint, best anti-403)
+    # Priority 2 — httpx      (standard async, works on Render)
     # ─────────────────────────────────────────────────────────────
     async def _api_get(self, path: str) -> dict[str, Any] | None:
         url = BASE_URL + path
         try:
             if _USE_CURL:
-                async with AsyncSession(impersonate="chrome124", headers=HEADERS, timeout=20) as s:
+                async with _CurlSession(
+                    impersonate="chrome124", headers=HEADERS, timeout=20
+                ) as s:
                     r = await s.get(url)
             else:
-                async with httpx.AsyncClient(timeout=20.0, headers=HEADERS) as client:
+                async with httpx.AsyncClient(
+                    timeout=20.0, headers=HEADERS, follow_redirects=True
+                ) as client:
                     r = await client.get(url)
 
             if r.status_code == 200:
